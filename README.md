@@ -1,2 +1,7 @@
 # GlobalScalingDemo
-A demonstration application accompanying an article describing how to use Azure to scale your application globally.
+
+
+Please find the corresponding 3-part article to this repository here:
+
+
+[https://blogs.siliconorchid.com/tags/coding_inspiration/global-scaling/part1-introduction/](https://blogs.siliconorchid.com/tags/coding_inspiration/global-scaling/part1-introduction/)
