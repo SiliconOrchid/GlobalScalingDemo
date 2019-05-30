@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
-
+using System.Linq;
 
 namespace GlobalScalingDemo.Function
 {
@@ -15,38 +15,21 @@ namespace GlobalScalingDemo.Function
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req)
         {
-            int nthPrimeNumber = 10000;
-            long result = FindPrimeNumber(nthPrimeNumber);
+            int primeNumberRangeSize = 500000;
+            long result = CountPrimeNumbers(primeNumberRangeSize);
 
             string currentHostingLocation = Environment.GetEnvironmentVariable("CurrentHostingLocation");
 
-            return new OkObjectResult($"Hello, the {nthPrimeNumber}th prime number is  {result}.   This result was calculated in {currentHostingLocation}");
+            return new OkObjectResult($"Hello, there are {result} prime numbers in the range 0 - {primeNumberRangeSize}.   This result was calculated in {currentHostingLocation}");
         }
 
-        public long FindPrimeNumber(int n)
+        public long CountPrimeNumbers(int rangeSize)
         {
-            int count = 0;
-            long a = 2;
-            while (count < n)
-            {
-                long b = 2;
-                bool isPrime = false;
-                while (b * b <= a)
-                {
-                    if (a % b == 0)
-                    {
-                        isPrime = true;
-                        break;
-                    }
-                    b++;
-                }
-                if (!isPrime)
-                {
-                    count++;
-                }
-                a++;
-            }
-            return (--a);
+            return ParallelEnumerable.Range(1, rangeSize)
+                .Count(n => Enumerable
+                    .Range(2, (int)Math.Sqrt(n) - 1)
+                    .All(i => n % i > 0)
+                );
         }
     }
 }
